@@ -3,9 +3,10 @@
 import {useEffect, useMemo, useState} from "react";
 
 type State =
-    | { status: "loading"; message: string }
-    | { status: "success"; message: string }
-    | { status: "error"; message: string };
+    | { status: "loading"; title: string; message: string }
+    | { status: "success"; title: string; message: string }
+    | { status: "pending"; title: string; message: string }
+    | { status: "error"; title: string; message: string };
 
 function parseAuthParams() {
     if (typeof window === "undefined") return null;
@@ -34,6 +35,7 @@ function parseAuthParams() {
 export default function CallbackClient() {
     const [state, setState] = useState<State>({
         status: "loading",
+        title: "One moment",
         message: "Processing…",
     });
 
@@ -46,27 +48,52 @@ export default function CallbackClient() {
             if (info.error || info.errorDescription) {
                 return {
                     status: "error",
+                    title: "Couldn’t complete",
                     message: info.errorDescription ?? info.error ?? "Something went wrong.",
                 };
             }
 
             if (info.message) {
+                const decoded = decodeURIComponent(info.message.replace(/\+/g, " "));
+
+                if (decoded.toLowerCase().includes("confirm link sent to the other email")) {
+                    return {
+                        status: "pending",
+                        title: "Check your email",
+                        message:
+                            "Your request was accepted. Please open the confirmation link that was sent to your new email address.",
+                    };
+                }
+
                 return {
                     status: "success",
-                    message: decodeURIComponent(info.message.replace(/\+/g, " ")),
+                    title: "All set",
+                    message: decoded,
                 };
             }
 
             const kind =
                 info.type === "signup"
-                    ? "Your email has been confirmed. You can now sign in."
+                    ? {
+                        title: "Email confirmed",
+                        message: "Your email has been confirmed. You can now sign in.",
+                    }
                     : info.type === "recovery"
-                        ? "You can now reset your password."
+                        ? {
+                            title: "Reset password",
+                            message: "You can now reset your password.",
+                        }
                         : info.type === "email_change"
-                            ? "Your email address has been updated."
-                            : "This action has been completed.";
+                            ? {
+                                title: "Email updated",
+                                message: "Your email address has been updated.",
+                            }
+                            : {
+                                title: "Completed",
+                                message: "This action has been completed.",
+                            };
 
-            return {status: "success", message: kind};
+            return {status: "success", ...kind};
         })();
 
         queueMicrotask(() => setState(next));
@@ -81,11 +108,7 @@ export default function CallbackClient() {
                 </div>
 
                 <h1 className="mt-3 text-lg font-semibold">
-                    {state.status === "loading"
-                        ? "One moment"
-                        : state.status === "success"
-                            ? "All set"
-                            : "Couldn’t complete"}
+                    {state.title}
                 </h1>
 
                 <p className="mt-2 text-sm text-[var(--muted)]">
