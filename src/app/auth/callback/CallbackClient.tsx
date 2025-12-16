@@ -59,6 +59,8 @@ function ResetPasswordForm(props: { accessToken: string; refreshToken: string })
     const [error, setError] = useState<string | null>(null);
     const [done, setDone] = useState(false);
 
+    const [showPassword, setShowPassword] = useState(false);
+
     useEffect(() => {
         let cancelled = false;
 
@@ -138,24 +140,46 @@ function ResetPasswordForm(props: { accessToken: string; refreshToken: string })
             <form className="mt-4 grid gap-3" onSubmit={onSubmit}>
                 <label className="grid gap-1 text-sm">
                     <span className="text-[var(--muted)]">New password</span>
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="border border-[var(--border)] bg-transparent p-2 outline-none"
-                        autoComplete="new-password"
-                    />
+
+                    <div className="flex items-center gap-2 border border-[var(--border)] px-2">
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="flex-1 bg-transparent py-2 outline-none"
+                            autoComplete="new-password"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword((v) => !v)}
+                            className="text-xs text-[var(--muted)] px-2 py-1"
+                            aria-label={showPassword ? "Hide password" : "Show password"}
+                        >
+                            {showPassword ? "hide" : "show"}
+                        </button>
+                    </div>
                 </label>
 
                 <label className="grid gap-1 text-sm">
                     <span className="text-[var(--muted)]">Confirm password</span>
-                    <input
-                        type="password"
-                        value={confirm}
-                        onChange={(e) => setConfirm(e.target.value)}
-                        className="border border-[var(--border)] bg-transparent p-2 outline-none"
-                        autoComplete="new-password"
-                    />
+
+                    <div className="flex items-center gap-2 border border-[var(--border)] px-2">
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            value={confirm}
+                            onChange={(e) => setConfirm(e.target.value)}
+                            className="flex-1 bg-transparent py-2 outline-none"
+                            autoComplete="new-password"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword((v) => !v)}
+                            className="text-xs text-[var(--muted)] px-2 py-1"
+                            aria-label={showPassword ? "Hide password" : "Show password"}
+                        >
+                            {showPassword ? "hide" : "show"}
+                        </button>
+                    </div>
                 </label>
 
                 {error && (
