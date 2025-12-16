@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import {useEffect} from "react";
 
 export default function Home() {
     useEffect(() => {
@@ -9,8 +9,11 @@ export default function Home() {
         const hash = window.location.hash || "";
         const hasAuth =
             hash.includes("access_token=") ||
+            hash.includes("refresh_token=") ||
             hash.includes("error=") ||
-            hash.includes("type=");
+            hash.includes("error_description=") ||
+            hash.includes("type=") ||
+            hash.includes("message=");
 
         if (hasAuth) {
             window.location.replace(`/auth/callback${hash}`);

@@ -21,6 +21,7 @@ function parseAuthParams() {
         type: hashParams.get("type") ?? searchParams.get("type"),
         accessToken: hashParams.get("access_token"),
         refreshToken: hashParams.get("refresh_token"),
+        message: hashParams.get("message") ?? searchParams.get("message"),
         error:
             hashParams.get("error") ??
             searchParams.get("error"),
@@ -46,6 +47,13 @@ export default function CallbackClient() {
                 return {
                     status: "error",
                     message: info.errorDescription ?? info.error ?? "Something went wrong.",
+                };
+            }
+
+            if (info.message) {
+                return {
+                    status: "success",
+                    message: decodeURIComponent(info.message.replace(/\+/g, " ")),
                 };
             }
 
