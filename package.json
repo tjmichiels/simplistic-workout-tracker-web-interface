@@ -1,6 +1,6 @@
 {
   "name": "simplistic-workout-tracker-web-interface",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
